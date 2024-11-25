@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: article-api-svc
+spec:
+  type: NodePort
+  selector:
+    app: article-api-pod
+  ports:
+    - name: app-port-mapping
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: article-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: article-api-pod
+  template:
+    metadata:
+      labels:
+        app: article-api-pod
+    spec:
+      containers:
+        - name: article-api
+          image: adndev29/myrepo:article-api
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: mysql_host
+                  name: article-config
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: mysql_port
+                  name: article-config
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  key: mysql_dbname
+                  name: article-config
+            - name: DB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: mysql_rootpwd
+                  name: article-secrets
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: mysql_username
+                  name: article-secrets
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: mysql_password
+                  name: article-secrets
+      imagePullSecrets:
+           - name: myhub-secret # Nom de votre secret

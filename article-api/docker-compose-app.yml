@@ -1,0 +1,27 @@
+services:
+  article-api:
+    build:
+      context: article-api
+      dockerfile: Dockerfile.layered
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_DATASOURCE_URL: jdbc:mysql://article-db:3306/appdb
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: appuserpass
+    ports:
+      - "18080:8080"
+    restart: always
+    depends_on:
+      - article-db
+
+  article-ui-nextjs:
+    container_name: article-ui-nextjs
+    build:
+      context: article-ui-nextjs
+      dockerfile: Dockerfile
+    ports:
+      - "13000:3000"
+    environment:
+      SERVER_SIDE_API_BASE_URL: http://article-api:8080
+      CLIENT_SIDE_API_BASE_URL: http://localhost:18080      
