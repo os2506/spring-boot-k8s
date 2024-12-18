@@ -92,7 +92,7 @@ kubectl describe deployments.apps/article-api-deploy
 kubectl rollout history deployments article-api-deploy
 kubectl scale deployment article-api-deploy --replicas=3
 
-kubectl set image deployment article-api-deploy article-api=adndev29/myrepo:bookmarker-api:1.1
+kubectl set image deployment article-api-deploy article-api=adndev29/myrepo:article-api:1.1
 kubectl rollout status deployment article-api-deploy
 
 kubectl rollout undo deployment article-api-deploy --to-revision=1
